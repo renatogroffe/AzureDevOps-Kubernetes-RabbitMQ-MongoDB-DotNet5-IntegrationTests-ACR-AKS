@@ -1,0 +1,36 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: workeracoes 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workeracoes
+  template:
+    metadata:
+      labels:
+        app: workeracoes 
+    spec:
+      containers:
+        - name: workeracoes 
+          image: container-registry.azurecr.io/workeracoes
+          ports:
+          - containerPort: 80
+          env:
+          - name: MongoDB__Database
+            value: DBAcoesProd
+          - name: MongoDB__Collection
+            value: HistoricoAcoes
+          - name: MongoDB__ConnectionString
+            valueFrom:
+              secretKeyRef:
+                name: workeracoes-secret
+                key: MongoDBConnection
+          - name: RabbitMQ__Queue
+            value: queue-acoes
+          - name: RabbitMQ__ConnectionString
+            valueFrom:
+              secretKeyRef:
+                name: workeracoes-secret
+                key: RabbitMQConnection
